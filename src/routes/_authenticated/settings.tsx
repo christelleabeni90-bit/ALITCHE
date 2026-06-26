@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ProfileAvatar } from "@/components/site/ProfileAvatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function Settings() {
   const { user } = Route.useRouteContext();
+  const qc = useQueryClient();
   const { data: profile, refetch } = useQuery({
     queryKey: ["profile", user.id],
     queryFn: async () => {
@@ -46,6 +48,31 @@ function Settings() {
     <div className="p-6 sm:p-10 max-w-3xl mx-auto">
       <h1 className="text-2xl sm:text-3xl font-display font-extrabold">Paramètres</h1>
       <p className="text-muted-foreground mt-1">Complète ton profil pour des recommandations encore plus précises.</p>
+
+      <div className="mt-6 bg-card rounded-3xl p-7 border border-border shadow-soft">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          <ProfileAvatar
+            userId={user.id}
+            name={form.full_name || profile?.full_name}
+            email={user.email}
+            avatarUrl={profile?.avatar_url}
+            size="lg"
+            editable
+            onUploaded={() => {
+              refetch();
+              qc.invalidateQueries({ queryKey: ["profile", user.id] });
+            }}
+          />
+          <div className="min-w-0">
+            <h2 className="text-lg font-display font-bold">Photo de profil</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Ajoute une photo pour personnaliser ton espace, comme sur LinkedIn.
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">JPG, PNG ou WebP — 2 Mo maximum.</p>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-6 bg-card rounded-3xl p-7 border border-border shadow-soft space-y-5">
         <div>
           <label className="text-sm font-medium">Email</label>

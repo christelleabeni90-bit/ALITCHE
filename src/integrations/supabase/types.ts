@@ -73,6 +73,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           bac_series: string | null
           bac_year: number | null
           city: string | null
@@ -85,6 +86,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           bac_series?: string | null
           bac_year?: number | null
           city?: string | null
@@ -97,6 +99,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           bac_series?: string | null
           bac_year?: number | null
           city?: string | null

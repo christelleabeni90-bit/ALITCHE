@@ -12,7 +12,7 @@ export const Route = createFileRoute("/careers")({
       { title: "Métiers & Filières — ALITCHÉ" },
       { name: "description", content: "Explore les métiers, les filières et les institutions du Bénin : UAC, EPAC, INSTI, ENEAM, IFRI." },
       { property: "og:title", content: "Métiers & Filières" },
-      { property: "og:description", content: "Découvre 8+ métiers, 150+ filières, 5 institutions de référence." },
+      { property: "og:description", content: "Découvre 50 métiers, filières et institutions de référence au Bénin." },
     ],
   }),
   component: Careers,
@@ -76,7 +76,7 @@ function Careers() {
           <h2 className="text-2xl font-display font-bold">Institutions du Bénin</h2>
           <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {INSTITUTIONS.map((i) => (
-              <div key={i.name} className="bg-card rounded-2xl p-5 border border-border hover-lift">
+              <div key={i.key} className="bg-card rounded-2xl p-5 border border-border hover-lift">
                 <div className="h-10 w-10 rounded-xl gradient-primary grid place-items-center text-primary-foreground mb-3">
                   <Building2 className="h-5 w-5" />
                 </div>
@@ -85,7 +85,7 @@ function Careers() {
                 <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{i.city}</span>
                   <span>•</span>
-                  <span>{i.programs} filières</span>
+                  <span>{i.programs.length} filières</span>
                 </div>
               </div>
             ))}

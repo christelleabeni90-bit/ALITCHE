@@ -1,7 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/site/PublicLayout";
+import { ImageSlideshow } from "@/components/site/ImageSlideshow";
 import { motion } from "framer-motion";
 import { Heart, Target, Users, Globe } from "lucide-react";
+
+import aboutSlide1 from "../../img/jeune sur la voie.jpeg";
+import aboutSlide2 from "../../img/jeune avec son ordinateur.jpeg";
+import aboutSlide3 from "../../img/jeune à l'université.jpeg";
+import aboutSlide4 from "../../img/groupe de jeune .jpeg";
+
+const ABOUT_SLIDES = [aboutSlide1, aboutSlide2, aboutSlide3, aboutSlide4];
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -54,15 +62,15 @@ function About() {
               ))}
             </div>
           </div>
-          <div className="aspect-square rounded-3xl gradient-primary shadow-elevated p-10 grid place-items-center text-primary-foreground relative overflow-hidden">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full bg-white blur-2xl" />
-              <div className="absolute bottom-1/4 right-1/4 h-32 w-32 rounded-full bg-white blur-2xl" />
-            </div>
-            <div className="relative text-center">
+          <div className="aspect-square rounded-3xl shadow-elevated p-10 grid place-items-center text-white relative overflow-hidden">
+            <ImageSlideshow
+              images={ABOUT_SLIDES}
+              overlayClassName="bg-gradient-to-br from-primary/55 via-primary/35 to-primary/50"
+            />
+            <div className="relative z-10 text-center drop-shadow-md">
               <div className="text-7xl font-display font-extrabold">A</div>
               <div className="mt-2 text-sm uppercase tracking-[0.3em]">Alitché</div>
-              <div className="mt-6 text-sm opacity-80 max-w-xs mx-auto">« Alitché » signifie <em>chemin</em> en fon. Nous traçons le tien.</div>
+              <div className="mt-6 text-sm opacity-95 max-w-xs mx-auto">« Alitché » signifie <em>chemin</em> en fon. Nous traçons le tien.</div>
             </div>
           </div>
         </div>

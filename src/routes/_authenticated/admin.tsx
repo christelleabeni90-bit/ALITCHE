@@ -84,7 +84,7 @@ function Admin() {
                 <tr key={i.name} className="border-t border-border">
                   <td className="py-2.5 font-medium">{i.name}</td>
                   <td>{i.city}</td>
-                  <td className="text-right">{i.programs}</td>
+                  <td className="text-right">{i.programs.length}</td>
                 </tr>
               ))}
             </tbody>

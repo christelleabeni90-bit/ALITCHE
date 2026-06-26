@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Brain, Target, Compass, Rocket, Bot, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useExploredCareersCount } from "@/lib/explored-careers";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dash,
@@ -21,6 +22,8 @@ function Dash() {
     },
   });
 
+  const exploredCount = useExploredCareersCount(user.id);
+
   const completed = !!diag;
   const score = completed ? 100 : 0;
   const name = (user.user_metadata?.full_name as string)?.split(" ")[0] || "Étudiant";
@@ -28,7 +31,7 @@ function Dash() {
   const widgets = [
     { icon: Brain, label: "Diagnostic", value: completed ? "Terminé" : "À faire", to: "/diagnostic", accent: completed ? "success" : "warning" },
     { icon: Target, label: "Recommandations", value: completed ? "Voir" : "—", to: "/recommendations", accent: "primary" },
-    { icon: Compass, label: "Métiers explorés", value: "8+", to: "/explorer", accent: "secondary" },
+    { icon: Compass, label: "Métiers explorés", value: exploredCount > 0 ? String(exploredCount) : "—", to: "/explorer", accent: "secondary" },
     { icon: Rocket, label: "Simulations", value: "0", to: "/simulator", accent: "primary" },
   ] as const;
 
@@ -74,7 +77,7 @@ function Dash() {
             {[
               { t: "Diagnostic", to: "/diagnostic", done: completed },
               { t: "Recommandations", to: "/recommendations", done: completed },
-              { t: "Exploration", to: "/explorer", done: false },
+              { t: "Exploration", to: "/explorer", done: exploredCount > 0 },
               { t: "Simulation", to: "/simulator", done: false },
               { t: "Coaching", to: "/coach", done: false },
             ].map((s, i) => (

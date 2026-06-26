@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -26,12 +26,23 @@ function Auth() {
   const { tab } = Route.useSearch();
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(tab);
+  const signupFormRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    setActiveTab(tab);
+  }, [tab]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) nav({ to: "/dashboard" });
     });
   }, [nav]);
+
+  function switchTab(next: "signin" | "signup") {
+    setActiveTab(next);
+    nav({ to: "/auth", search: { tab: next }, replace: true });
+  }
 
   async function signIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -66,8 +77,13 @@ function Auth() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Compte créé ! Vérifie tes emails si nécessaire.");
-    nav({ to: "/dashboard" });
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData.session) await supabase.auth.signOut();
+
+    signupFormRef.current?.reset();
+    toast.success("Compte créé ! Connecte-toi avec tes identifiants.");
+    switchTab("signin");
   }
 
   return (
@@ -106,7 +122,7 @@ function Auth() {
         <div className="my-auto max-w-sm w-full mx-auto">
           <h1 className="text-3xl font-display font-extrabold">Bienvenue 👋</h1>
           <p className="mt-2 text-muted-foreground text-sm">Connecte-toi ou crée ton compte pour commencer.</p>
-          <Tabs defaultValue={tab} className="mt-6">
+          <Tabs value={activeTab} onValueChange={(v) => switchTab(v as "signin" | "signup")} className="mt-6">
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="signin">Connexion</TabsTrigger>
               <TabsTrigger value="signup">Inscription</TabsTrigger>
@@ -127,7 +143,7 @@ function Auth() {
               </form>
             </TabsContent>
             <TabsContent value="signup" className="mt-5">
-              <form onSubmit={signUp} className="space-y-4">
+              <form ref={signupFormRef} onSubmit={signUp} className="space-y-4">
                 <div>
                   <label className="text-sm font-medium">Nom complet</label>
                   <Input name="full_name" required className="mt-1.5 h-11" placeholder="Aïcha K." />

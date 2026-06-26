@@ -1,12 +1,139 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight, Sparkles, Brain, Target, Compass, Rocket, Bot, Check,
   TrendingDown, Clock, GraduationCap, Briefcase, Star, Quote, Play,
 } from "lucide-react";
 import { PublicLayout } from "@/components/site/PublicLayout";
+import {
+  AnimatedSectionHeader,
+  ScrollSection,
+  SectionReveal,
+  StaggerItem,
+} from "@/components/site/ScrollSection";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+
+import heroSlide1 from "../../img/3.jpeg";
+import heroSlide2 from "../../img/2.jpeg";
+import heroSlide3 from "../../img/5.jpeg";
+import heroSlide4 from "../../img/10.jpeg";
+
+const HERO_SLIDES = [heroSlide1, heroSlide2, heroSlide3, heroSlide4];
+
+const TESTIMONIALS = [
+  {
+    quote: "Grâce à ALITCHÉ, j'ai découvert que j'étais faite pour la Data Science. Aujourd'hui je suis en 2ème année à l'IFRI et passionnée.",
+    name: "Fatou H.",
+    role: "Étudiante IFRI — Cotonou",
+    initials: "FH",
+  },
+  {
+    quote: "Je hésitais entre médecine et ingénierie. Le diagnostic m'a révélé mon profil analytique — aujourd'hui je suis en génie civil à l'EPAC et je m'épanouis.",
+    name: "Koffi A.",
+    role: "Étudiant EPAC — Porto-Novo",
+    initials: "KA",
+  },
+  {
+    quote: "ALITCHÉ m'a aidée à comprendre que mon profil social correspondait au droit. Je suis en L2 à l'UAC et je me sens enfin à ma place.",
+    name: "Mariam D.",
+    role: "Étudiante UAC — Abomey-Calavi",
+    initials: "MD",
+  },
+  {
+    quote: "Le coach IA m'a orienté vers l'entrepreneuriat digital. Six mois après mon bac, j'ai lancé ma startup — ALITCHÉ a changé ma trajectoire.",
+    name: "Ibrahim S.",
+    role: "Fondateur — Parakou",
+    initials: "IS",
+  },
+];
+
+function HeroBackgroundSlideshow() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % HERO_SLIDES.length);
+    }, 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="absolute inset-0">
+      <AnimatePresence mode="sync">
+        <motion.img
+          key={index}
+          src={HERO_SLIDES[index]}
+          alt=""
+          aria-hidden
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </AnimatePresence>
+      <div className="absolute inset-0 bg-primary/50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-primary/40" />
+    </div>
+  );
+}
+
+function TestimonialCarousel() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % TESTIMONIALS.length);
+    }, 5500);
+    return () => clearInterval(id);
+  }, []);
+
+  const current = TESTIMONIALS[index];
+
+  return (
+    <div className="rounded-3xl gradient-primary p-10 sm:p-14 text-primary-foreground relative overflow-hidden min-h-[300px] sm:min-h-[280px]">
+      <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: 48, filter: "blur(6px)" }}
+          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, x: -48, filter: "blur(6px)" }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Quote className="h-10 w-10 opacity-60" />
+          <p className="mt-4 text-xl sm:text-2xl font-display leading-snug max-w-3xl">
+            « {current.quote} »
+          </p>
+          <div className="mt-6 flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-white/20 grid place-items-center font-bold shrink-0">
+              {current.initials}
+            </div>
+            <div>
+              <div className="font-semibold">{current.name}</div>
+              <div className="text-sm opacity-80">{current.role}</div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      <div className="mt-8 flex items-center justify-center gap-2">
+        {TESTIMONIALS.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={`Témoignage ${i + 1}`}
+            onClick={() => setIndex(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === index ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/60"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,31 +231,32 @@ function Home() {
           <div className="relative h-[460px] hidden lg:block">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }}
-              className="absolute inset-0 rounded-3xl gradient-primary p-8 shadow-elevated overflow-hidden"
+              className="absolute inset-0 rounded-3xl p-8 shadow-elevated overflow-hidden"
             >
-              <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-              <div className="relative h-full grid place-items-center">
-                <div className="bg-white/95 rounded-2xl p-6 w-72 shadow-elevated">
+              <HeroBackgroundSlideshow />
+              <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+              <div className="relative z-10 h-full grid place-items-center">
+                <div className="rounded-2xl p-6 w-72">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-12 w-12 rounded-full gradient-primary grid place-items-center text-primary-foreground font-bold">AK</div>
+                    <div className="h-12 w-12 rounded-full gradient-primary grid place-items-center text-primary-foreground font-bold shadow-lg">AK</div>
                     <div>
-                      <div className="font-semibold text-foreground">Aïcha K.</div>
-                      <div className="text-xs text-muted-foreground">BAC D • Cotonou</div>
+                      <div className="font-semibold text-white drop-shadow-md">Aïcha K.</div>
+                      <div className="text-xs text-white/85 drop-shadow-sm">BAC D • Cotonou</div>
                     </div>
                   </div>
                   <div className="space-y-2.5">
                     {["Analytique", "Créative", "Sociale"].map((p, i) => (
                       <div key={p}>
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-foreground">{p}</span>
-                          <span className="font-semibold text-primary">{[92, 78, 65][i]}%</span>
+                          <span className="text-white drop-shadow-sm">{p}</span>
+                          <span className="font-semibold text-white drop-shadow-sm">{[92, 78, 65][i]}%</span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-white/30 overflow-hidden backdrop-blur-sm">
                           <motion.div
                             initial={{ width: 0 }} animate={{ width: `${[92, 78, 65][i]}%` }}
                             transition={{ delay: 0.5 + i * 0.15, duration: 0.8 }}
-                            className="h-full gradient-primary rounded-full"
+                            className="h-full bg-white rounded-full"
                           />
                         </div>
                       </div>
@@ -146,90 +274,86 @@ function Home() {
       </section>
 
       {/* PROBLEM */}
-      <section className="py-20 bg-background">
+      <ScrollSection className="py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold">{t("problem.title")}</h2>
-            <p className="mt-3 text-muted-foreground">{t("problem.subtitle")}</p>
-          </div>
+          <SectionReveal>
+            <AnimatedSectionHeader
+              title={t("problem.title")}
+              subtitle={t("problem.subtitle")}
+            />
+          </SectionReveal>
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {problems.map((p, i) => (
-              <motion.div
-                key={p.t}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-card rounded-3xl p-6 border border-border hover-lift"
-              >
-                <div className={`h-12 w-12 rounded-2xl bg-muted grid place-items-center mb-4 ${p.color}`}>
-                  <p.icon className="h-6 w-6" />
+              <StaggerItem key={p.t} index={i}>
+                <div className="bg-card rounded-3xl p-6 border border-border hover-lift h-full">
+                  <div className={`h-12 w-12 rounded-2xl bg-muted grid place-items-center mb-4 ${p.color}`}>
+                    <p.icon className="h-6 w-6" />
+                  </div>
+                  <div className={`text-3xl font-display font-extrabold ${p.color}`}>{p.stat}</div>
+                  <h3 className="mt-2 font-semibold">{p.t}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{p.d}</p>
                 </div>
-                <div className={`text-3xl font-display font-extrabold ${p.color}`}>{p.stat}</div>
-                <h3 className="mt-2 font-semibold">{p.t}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{p.d}</p>
-              </motion.div>
+              </StaggerItem>
             ))}
           </div>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* SOLUTION */}
-      <section className="py-20 bg-muted/40">
+      <ScrollSection className="py-20 bg-muted/40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold">
-              <Sparkles className="h-3.5 w-3.5" /> Notre méthode
-            </span>
-            <h2 className="mt-4 text-3xl sm:text-4xl font-display font-bold">{t("solution.title")}</h2>
-            <p className="mt-3 text-muted-foreground">{t("solution.subtitle")}</p>
-          </div>
+          <SectionReveal>
+            <AnimatedSectionHeader
+              badge={
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold">
+                  <Sparkles className="h-3.5 w-3.5" /> Notre méthode
+                </span>
+              }
+              title={t("solution.title")}
+              subtitle={t("solution.subtitle")}
+            />
+          </SectionReveal>
           <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-5 gap-4 relative">
             {features.map((f, i) => (
-              <motion.div
-                key={f.t}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="relative bg-card rounded-3xl p-6 border border-border hover-lift"
-              >
-                <div className="absolute -top-3 -left-3 h-8 w-8 rounded-full gradient-primary grid place-items-center text-xs font-bold text-primary-foreground shadow-soft">
-                  {i + 1}
+              <StaggerItem key={f.t} index={i}>
+                <div className="relative bg-card rounded-3xl p-6 border border-border hover-lift h-full">
+                  <div className="absolute -top-3 -left-3 h-8 w-8 rounded-full gradient-primary grid place-items-center text-xs font-bold text-primary-foreground shadow-soft">
+                    {i + 1}
+                  </div>
+                  <div className="h-12 w-12 rounded-2xl gradient-primary grid place-items-center text-primary-foreground mb-4">
+                    <f.icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="font-display font-semibold">{f.t}</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{f.d}</p>
                 </div>
-                <div className="h-12 w-12 rounded-2xl gradient-primary grid place-items-center text-primary-foreground mb-4">
-                  <f.icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-display font-semibold">{f.t}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{f.d}</p>
-              </motion.div>
+              </StaggerItem>
             ))}
           </div>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* Testimonial / Social proof */}
-      <section className="py-20 bg-background">
+      <ScrollSection className="py-20 bg-background">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl gradient-primary p-10 sm:p-14 text-primary-foreground relative overflow-hidden">
-            <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-            <Quote className="h-10 w-10 opacity-60" />
-            <p className="mt-4 text-xl sm:text-2xl font-display leading-snug max-w-3xl">
-              « Grâce à ALITCHÉ, j'ai découvert que j'étais faite pour la Data Science. Aujourd'hui je suis en 2ème année à l'IFRI et passionnée. »
-            </p>
-            <div className="mt-6 flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-white/20 grid place-items-center font-bold">FH</div>
-              <div>
-                <div className="font-semibold">Fatou H.</div>
-                <div className="text-sm opacity-80">Étudiante IFRI — Cotonou</div>
-              </div>
-            </div>
-          </div>
+          <SectionReveal>
+            <TestimonialCarousel />
+          </SectionReveal>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* CTA */}
-      <section className="py-24 bg-muted/30">
+      <ScrollSection className="py-24 bg-muted/30">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <h2 className="text-3xl sm:text-4xl font-display font-bold">Prêt à découvrir ton avenir ?</h2>
-          <p className="mt-3 text-muted-foreground">Crée ton compte gratuitement et lance ton diagnostic en moins de 10 minutes.</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
+          <SectionReveal>
+            <AnimatedSectionHeader title="Prêt à découvrir ton avenir ?" subtitle="Crée ton compte gratuitement et lance ton diagnostic en moins de 10 minutes." />
+          </SectionReveal>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ type: "spring", stiffness: 90, damping: 22, delay: 0.2 }}
+            className="mt-7 flex flex-wrap justify-center gap-3"
+          >
             <Link to="/auth" search={{ tab: "signup" } as never}>
               <Button size="lg" className="gradient-primary text-primary-foreground border-0 h-12 px-7">
                 {t("cta.start")} <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -238,14 +362,20 @@ function Home() {
             <Link to="/careers">
               <Button size="lg" variant="outline" className="h-12 px-7">{t("cta.explore")}</Button>
             </Link>
-          </div>
-          <div className="mt-6 text-sm text-muted-foreground flex flex-wrap justify-center gap-4">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ delay: 0.35, duration: 0.6 }}
+            className="mt-6 text-sm text-muted-foreground flex flex-wrap justify-center gap-4"
+          >
             <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-success" /> 100% gratuit</span>
             <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-success" /> Sans engagement</span>
             <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-success" /> Données protégées</span>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </ScrollSection>
     </PublicLayout>
   );
 }
