@@ -49,6 +49,20 @@ Aucune installation n'est nécessaire. Deux options :
    détecte et active automatiquement la collecte des messages. Retrouvez-les
    ensuite dans l'onglet **Forms** de votre tableau de bord Netlify.
 
+### Netlify (dépôt Git connecté)
+
+Ce dépôt contient aussi une autre application à sa racine (projet React/Vite
+séparé). Pour que Netlify déploie uniquement ce site statique sans tenter de
+lancer un build du reste du dépôt, un fichier `netlify.toml` est présent à la
+racine du dépôt et indique à Netlify de :
+- se placer dans `portfolio-lea-abeni/` (`base`),
+- publier ce dossier tel quel (`publish = "."`),
+- ne lancer aucune commande de build (`command = ""`).
+
+Il suffit donc de connecter le dépôt GitHub dans Netlify (« Import an existing
+project ») : aucune configuration manuelle supplémentaire n'est nécessaire,
+Netlify lit `netlify.toml` automatiquement.
+
 ### Vercel
 
 1. Créez un compte sur https://vercel.com

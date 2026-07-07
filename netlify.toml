@@ -1,0 +1,4 @@
+[build]
+  base = "portfolio-lea-abeni"
+  publish = "."
+  command = ""
