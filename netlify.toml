@@ -1,4 +1,3 @@
 [build]
-  base = "portfolio-lea-abeni"
-  publish = "."
+  publish = "portfolio-lea-abeni"
   command = ""
